@@ -1,3 +1,5 @@
+# A script to test the breadboard controller.
+# An LED has been added so we have visual feedback that our code is working
 from gpiozero import Button, LED
 btn1 = Button(17)
 btn2 = Button(22)
