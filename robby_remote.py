@@ -16,8 +16,6 @@ import gpiozero
 gpiozero.Device.pin_factory = PiGPIOFactory(host='192.168.7.96')
 
 robot = Robot(left=(7,8), right=(9,10))
-robot.forward()
-time.sleep(0.5)
 robot.stop()
 
 local_pins = PiGPIOFactory(host="localhost")
@@ -55,8 +53,8 @@ def stp():
 
 btn1.when_pressed = bck
 btn2.when_pressed = fwd
-btn3.when_pressed = rgt
-btn4.when_pressed = lft
+btn3.when_pressed = lft
+btn4.when_pressed = rgt
 
 btn1.when_released = stp
 btn2.when_released = stp
