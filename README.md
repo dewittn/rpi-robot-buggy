@@ -23,8 +23,8 @@ I'm a big believer in systems thinking because it makes decisions easier and rem
 ## Plans for this project
 
 - [x] Build a working buggy
-- [x] Remote control the buggy with another pie
-- [ ] Remote control buggy over VPN
+- [x] [Remote control the buggy with another pie](porjects/remote-controller/)
+- [ ] [Remote control buggy over VPN](projects/vpn/)
 - [ ] Add all-wheel drive (2 motors controller boards)
 - [ ] Control the buggy using a USB gamepad
 - [ ] Change buggy speed using a USB gamepad
