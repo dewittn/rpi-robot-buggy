@@ -1,5 +1,8 @@
 # Remote controlling your buggy with a VPN
 
+⚠️ **Disclaimer:** This tutorial is still a work in progress and may need some editing for clarity.
+
+---
 In honor of NASA's Perseverance rover landing on Mars, my student and I wanted to try remote controlling a buggy thousands of miles aways. To do this, we will need to install a VPN on both the Buggy Pi, and the Controller Pi. An optional step is to setup a public server that can act as a go between.
 We will also a need a server that is connected to the internet host the VPN and send signals back and forth. 
 
@@ -54,13 +57,29 @@ wg genkey | tee buggy.privatekey | wg pubkey > buggy.publickey
 
 ## Step 4: Set up WireGuard Server
 
-If you would like to setup WireGuard on a public server as a go between, check out [this Linode guide](https://www.linode.com/docs/guides/set-up-wireguard-vpn-on-ubuntu/) for more details. 
+To connect Raspberry Pi's running on different networks we need to access to a server that is connected to the public internet. If you don't have access to a public server then you can still finish this project by setting up the Controller Pi as the server.
 
-If you don't have a public server, or don't want to set one up, you can still make this project work. See the local VPN instructions.
+Setting up a public server is outside the scope of this project, but here is a [Linode guide](https://www.linode.com/docs/guides/set-up-wireguard-vpn-on-ubuntu/) on how to install WireGuard on an Ubuntu server.
 
-Our `/etc/wireguard/wg0.conf` on the Sever will look like this:
+Once you have logged into your sever you need to generate keys. If you are using the controller as the server you can skip this step.
+
+```
+umask 077
+wg genkey | tee server.privatekey | wg pubkey > server.publickey
+```
+
+Next we need to setup the configuration file, `/etc/wireguard/wg0.conf`, for the Sever. Each device on our VPN will get it's own IP address. Our routing table looks something like this:
+
+```
+192.168.2.1 # For the Public server or the Controller Pi
+192.168.2.2 # For the Buggy Pi
+192.168.2.3 # For the Conroller if we have a public server.
+```
+
+The server conf will look something like this.
 ```
 [Interface]
+PrivateKey = <Server Private Key>
 Address = 192.168.3.1/32
 SaveConfig = true
 PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE; ip6tables -A FORWARD -i wg0 -j ACCEPT; ip6tables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
@@ -68,32 +87,30 @@ PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING 
 ListenPort = 51820
 
 [Peer]
-PublicKey = <Controller Public Key>
+PublicKey = <Buddy Public Key>
 AllowedIPs = 192.168.3.2/24
 
+## Do not add this block if the Controller is the Server
 [Peer]
-PublicKey = <Buddy Public Key>
+PublicKey = <Controller Public Key>
 AllowedIPs = 192.168.3.3/24
-
 ```
 
+**Note:**
+`<Buddy Public Key>` is just a place holder. You will need to replace it with the actual contents of the `buggy.publickey` file. The key files are just plain text and can be opened in any text editor or by running the following command.
+
+
 ```
-umask 077
-wg genkey | tee server.privatekey | wg pubkey > server.publickey
+$ cat buggy.publickey
+7lTo3CyQ/5SJgxGgtHyWVwgAKmbIuzQhPt4L6z1ZqlY=
 ```
 
+Look at [buggy-sample.conf](projects/vpn/buggy-sample.conf),  [controller-sample.conf](projects/vpn/controller-sample.conf), and [server-sample.conf](projects/vpn/server-sample.conf) for complete examples. **These are just examples. Do not use them for your project because they will not work.**
 
 ## Step 5: Setup WireGuard Client(s)
 
 Next we need to setup the WireGuard configuration file on both the controller pi, and the buggy pi. For a more detailed explanation on how setting up the WireGuard conf check out their website. 
 
-We need to assign IP addresses for each of the Pi's and the server. 
-
-```
-192.168.2.1 # This will be the server's
-192.168.2.2 # This will be the conroller
-192.168.2.3 # This will be the Buggy
-```
 
 To get your private key you can open `controller.privatekey` in a text editor or run this command `cat controller.privatekey` you should see a string of random letters and numbers like this:
 ```
