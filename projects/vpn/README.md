@@ -3,18 +3,17 @@
 ⚠️ **Disclaimer:** This tutorial is still a work in progress and may need some editing for clarity.
 
 ---
-In honor of NASA's Perseverance rover landing on Mars, my student and I wanted to try remote controlling a buggy thousands of miles aways. To do this, we will need to install a VPN on both the Buggy Pi, and the Controller Pi. An optional step is to setup a public server that can act as a go between.
+In honor of NASA's Perseverance rover landing on Mars, my student and I wanted to try remote controlling a buggy thousands of miles aways. To do this, we will need to install a VPN on both the _Buggy Pi_, and the _Controller Pi_. An optional step is to setup a public server that can act as a go between.
 We will also a need a server that is connected to the internet host the VPN and send signals back and forth. 
 
 I use Linode as my hosting provider. They have very affordable plans start at $5/month.
 
 In this tutorial we will be installing, and setting the WireGuard VPN on Raspberry Pi OS. I like WireGuard because it is very fast, and relatively simple to get setup.
 
-(Hat Tip to [Michel Deslierres](https://sigmdel.ca/michel/ha/wireguard/wireguard_02_en.html) his instructions on how to get this working, which I have simplified below.)
 
 ## Step 1: Update System
 
-Before we install WireGuard we want to make sure our system is up to date by running the following commands.
+Before we install WireGuard we want to make sure our _Buggy Pi_ and _Controller Pi_ are both running the latest software. You can update each system by running the following commands:
 
 ```
 sudo apt update 
@@ -23,49 +22,48 @@ sudo apt upgrade -y
 
 ## Step 2: Install WireGuard
 
-As of March 2021, WireGuard is not yet part of the main Raspberry Pi OS repository. However, it is included in the `Testing` repository, which we can add with this command.
+As of March 2021, WireGuard is part of the main Raspberry Pi OS repository. so after you update, you should be able to install WireGuard with this command:
 
 ```
-echo "deb http://archive.raspbian.org/raspbian testing main" | sudo tee --append /etc/apt/sources.list.d/testing.list
-```
-
-Then, we need to update the system again before installing WireGuard.
-
-```
-sudo apt update
 sudo apt install wireguard
 ```
 
+**📝 Note:** You will need to install WireGaurd on both your _Buggy Pi_ and _Controller Pi_
+
 ## Step 3: Create WireGuard Keys
 
+Before you setup your config file you must generate public and private keys. First, generate keys on our the _Controller Pi_.
 ```
 umask 077
 wg genkey > controller.privatekey
 wg pubkey < controller.privatekey > controller.publickey
 ```
 
-You could also run it as one command like this:
-```
-wg genkey | tee controller.privatekey | wg pubkey > controller.publickey
-```
-
-You will need to run the same command(s) on your Buggy Pi
+Then run the same commands on your _Buggy Pi_.
 ```
 umask 077
-wg genkey | tee buggy.privatekey | wg pubkey > buggy.publickey
+wg genkey > controller.privatekey
+wg pubkey < controller.privatekey > controller.publickey
+```
+
+**📝 Note:** You can also generate keys with one command like this:
+```
+umask 077
+wg genkey | tee controller.privatekey | wg pubkey > controller.publickey
 ```
 
 ## Step 4: Set up WireGuard Server
 
-To connect Raspberry Pi's running on different networks we need to access to a server that is connected to the public internet. If you don't have access to a public server then you can still finish this project by setting up the Controller Pi as the server.
+To connect Raspberry Pi's running on different networks we need to access to a server that is connected to the public internet. If you don't have access to a public server then you can still finish this project by setting up the _Controller Pi_ as the server.
 
 Setting up a public server is outside the scope of this project, but here is a [Linode guide](https://www.linode.com/docs/guides/set-up-wireguard-vpn-on-ubuntu/) on how to install WireGuard on an Ubuntu server.
 
-Once you have logged into your sever you need to generate keys. If you are using the controller as the server you can skip this step.
+Once you have logged into your sever you need to generate keys. If you are using the _Controller Pi_ as the server you can skip this step.
 
 ```
 umask 077
-wg genkey | tee server.privatekey | wg pubkey > server.publickey
+wg genkey > server.privatekey
+wg pubkey < server.privatekey > server.publickey
 ```
 
 Next we need to setup the configuration file, `/etc/wireguard/wg0.conf`, for the Sever. Each device on our VPN will get it's own IP address. Our routing table looks something like this:
@@ -96,21 +94,15 @@ PublicKey = <Controller Public Key>
 AllowedIPs = 192.168.3.3/24
 ```
 
-**Note:**
-`<Buddy Public Key>` is just a place holder. You will need to replace it with the actual contents of the `buggy.publickey` file. The key files are just plain text and can be opened in any text editor or by running the following command.
+`<Buddy Public Key>` is just a place holder. You will need to replace it with the actual contents of the `buggy.publickey` file. The key files are just plain text and can be opened in any text editor or by running `cat buggy.publickey`. 
 
+Copy the contents of `buggy.publickey` and paste it into your config file. See [buggy-sample.conf](projects/vpn/buggy-sample.conf), [controller-sample.conf](projects/vpn/controller-sample.conf), and [server-sample.conf](projects/vpn/server-sample.conf) for examples of what final files should look like. 
 
-```
-$ cat buggy.publickey
-7lTo3CyQ/5SJgxGgtHyWVwgAKmbIuzQhPt4L6z1ZqlY=
-```
-
-Look at [buggy-sample.conf](projects/vpn/buggy-sample.conf),  [controller-sample.conf](projects/vpn/controller-sample.conf), and [server-sample.conf](projects/vpn/server-sample.conf) for complete examples. **These are just examples. Do not use them for your project because they will not work.**
+**📝 Note:** **Do not use** the example `conf` files in your project. They are for demonstration purposes only and will not work.
 
 ## Step 5: Setup WireGuard Client(s)
 
 Next we need to setup the WireGuard configuration file on both the controller pi, and the buggy pi. For a more detailed explanation on how setting up the WireGuard conf check out their website. 
-
 
 To get your private key you can open `controller.privatekey` in a text editor or run this command `cat controller.privatekey` you should see a string of random letters and numbers like this:
 ```
@@ -124,7 +116,7 @@ $ cat server.publickey
 7lTo3CyQ/5SJgxGgtHyWVwgAKmbIuzQhPt4L6z1ZqlY=
 ```
 
-> **Please Note:** These keys are for demonstration purposes only. Please do not use in your actual config files.
+**📝 Note:** These keys are for demonstration purposes only. Please do not use in your actual config files.
 
 `/etc/wireguard/wg0.conf` on Controller device:
 ```

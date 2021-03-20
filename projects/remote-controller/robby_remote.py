@@ -12,7 +12,7 @@ import time
 
 # To address this bug we set the global pin factory to the remote host
 # and connect to the breadboard controller through a localhost pin_factory.
-Device.pin_factory = PiGPIOFactory(host='192.168.7.96')
+Device.pin_factory = PiGPIOFactory(host='192.168.3.5')
 robot = Robot(left=(7,8), right=(9,10))
 
 robot.stop()
