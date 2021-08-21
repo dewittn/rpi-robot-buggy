@@ -32,7 +32,7 @@ I'm a big believer in systems thinking because it makes decisions easier and rem
 - [x] Add all-wheel drive (2 motors controller boards)
 - [x] Control the buggy using a USB gamepad
 - [x] Change buggy speed using a USB gamepad
-- [ ] Create a startup script (In Progress)
+- [ ] _Create a startup script (In Progress)_
 - [ ] Add proximity sensors to prevent collisions
 
 ## Hardware
