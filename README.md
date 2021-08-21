@@ -1,11 +1,14 @@
 # Robot Buggy Readme
 
-This is a project to create a robot buggy using following the instructions on Raspberrypi.org. 
+This is a project to create a robot buggy using following the instructions on Raspberrypi.org.
 
 https://projects.raspberrypi.org/en/projects/build-a-buggy
 
-(Robot Buggy V1)
-![Robot Buggy V1](https://static.nelsonroberto.com/images/IMG_0526.jpeg)
+(Robot Buggy v1)
+![Robot Buggy v1](https://static.nelsonroberto.com/images/IMG_0526.jpeg)
+
+(Robot Buggy v2)
+![Robot Buggy v2]()
 
 ## Background
 
@@ -24,20 +27,23 @@ I'm a big believer in systems thinking because it makes decisions easier and rem
 
 - [x] Build a working buggy
 - [x] [Remote control the buggy with another pie](porjects/remote-controller/)
-- [ ] [Remote control buggy over VPN](projects/vpn/)
-- [ ] Add all-wheel drive (2 motors controller boards)
-- [ ] Control the buggy using a USB gamepad
-- [ ] Change buggy speed using a USB gamepad
+- [x] [Remote control buggy over VPN](projects/vpn/)
+- [x] Add all-wheel drive (2 motors controller boards)
+- [x] Control the buggy using a USB gamepad
+- [x] Change buggy speed using a USB gamepad
+- [ ] Create a startup script
 - [ ] Add proximity sensors to prevent collisions
 
 ## Hardware
 
 Robot Buggy
+
 - RPI Zero W
 - [SZDoit 4WD Smart Metal Robot Car Chassis Kit](https://amzn.to/3s6nk0A)
 - [L298N Motor Drive Controller Board](https://amzn.to/3k27PDP)
 - [LAMPVPATH (Pack of 2) 4 AA Battery Holder](https://amzn.to/3uah7m5)
 
 Breadboard Controller
+
 - RPI 4 (4GB Model)
 - [REXQualis Electronics Component Fun Kit](https://amzn.to/2Zqw1pZ)
