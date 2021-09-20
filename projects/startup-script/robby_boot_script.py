@@ -1,3 +1,4 @@
+#! /usr/bin/env python3
 # Code to run the buggy from a remote Pi using a home-brew game controller.
 # https://projects.raspberrypi.org/en/projects/remote-control-buggy/4
 from gpiozero import Robot, Button, LED, Device
@@ -73,8 +74,21 @@ test_backward()
 test_right()
 test_left()
 
+
+  
 ## Setup GamePad
-gamepad = InputDevice('/dev/input/event0')
+for i in range(5):
+  if InputDevice('/dev/input/event' + i).name = "Logitech Gamepad F310":
+    gamepad = InputDevice('/dev/input/event'+ i)
+i = 0
+while i < 6
+  gamepad = InputDevice('/dev/input/event'+ i)
+  if gamepad.name = "Logitech Gamepad F310":
+    break
+else:
+  print("ERROR: Game pad cannot be found!")
+  quit()
+
 button_commands = {
   304 : bck, # btn_a
   305 : rgt, # btn_b
@@ -104,7 +118,9 @@ try:
         if event.type == ecodes.EV_ABS: 
             if event.value >= 1:
               speed = event.value/255
-              button_commands.get(event.code)(speed)
+              command = button_commands.get(event.code)
+              if command:
+                command(speed)
             else:
               stp()
 
