@@ -1,5 +1,6 @@
 # Code to run the buggy from a remote Pi using a home-brew game controller.
 # https://projects.raspberrypi.org/en/projects/remote-control-buggy/4
+# https://core-electronics.com.au/tutorials/using-usb-and-bluetooth-controllers-with-python.html
 from gpiozero import Robot, Button, LED, Device
 from gpiozero.pins.pigpio import PiGPIOFactory
 from evdev import InputDevice, categorize, ecodes
