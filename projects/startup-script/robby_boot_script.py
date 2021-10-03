@@ -74,17 +74,15 @@ test_backward()
 test_right()
 test_left()
 
-
-  
 ## Setup GamePad
-for i in range(5):
-  if InputDevice('/dev/input/event' + i).name = "Logitech Gamepad F310":
-    gamepad = InputDevice('/dev/input/event'+ i)
+#gamepad = InputDevice('/dev/input/event1')
+
 i = 0
-while i < 6
-  gamepad = InputDevice('/dev/input/event'+ i)
-  if gamepad.name = "Logitech Gamepad F310":
+while i < 6:
+  gamepad = InputDevice('/dev/input/event'+ str(i))
+  if gamepad.name == "Logitech Gamepad F310":
     break
+  i += 1
 else:
   print("ERROR: Game pad cannot be found!")
   quit()
