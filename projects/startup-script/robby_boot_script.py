@@ -2,7 +2,8 @@
 # Code to run the buggy from a remote Pi using a home-brew game controller.
 # https://projects.raspberrypi.org/en/projects/remote-control-buggy/4
 from gpiozero import Robot, Button, LED, Device
-from evdev import InputDevice, categorize, ecodes 
+from evdev import InputDevice, categorize, ecodes
+from os.path import exists
 from signal import pause
 import RPi.GPIO as GPIO
 import time
@@ -68,6 +69,9 @@ def test_left():
     time.sleep(testing_time)
     stp()
 
+def event_path(i):
+  return '/dev/input/event' + str(i)
+
 ## Call Testing Functions
 test_forward()
 test_backward()
@@ -78,8 +82,8 @@ test_left()
 #gamepad = InputDevice('/dev/input/event1')
 
 i = 0
-while i < 6:
-  gamepad = InputDevice('/dev/input/event'+ str(i))
+while exists(event_path(i)):
+  gamepad = InputDevice(event_path(i))
   if gamepad.name == "Logitech Gamepad F310":
     break
   i += 1
